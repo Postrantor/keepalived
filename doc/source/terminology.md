@@ -1,4 +1,5 @@
 ---
+tip: translate by openai@2023-06-20 08:32:25
 title: Terminology
 ---
 
@@ -8,17 +9,23 @@ put image here
 
 LVS stands for "Linux Virtual Server". LVS is a patched Linux kernel that adds a load balancing facility. For more information on LVS, please refer to the project homepage: [http://www.linux-vs.org](http://www.linux-vs.org). LVS acts as a network bridge (using NAT) to load balance TCP/UDP stream. The LVS router components are:
 
+> LVS 代表“Linux 虚拟服务器”。LVS 是一个补丁 Linux 内核，增加了负载均衡功能。有关 LVS 的更多信息，请参阅项目主页：[http://www.linux-vs.org](http://www.linux-vs.org)。LVS 作为一个网络桥接（使用 NAT）来负载均衡 TCP / UDP 流。LVS 路由器组件有：
+
 - WAN Interface: Ethernet Network Interface Controller that will be accessed by all the clients.
 - LAN Interface: Ethernet Network Interface Controller to manage all the load balanced servers.
 - Linux kernel: The kernel is patched with the latest LVS and is used as a router OS.
 
 In this document, we will use the following keywords:
 
+> 在本文档中，我们将使用以下关键字：
+
 # LVS Component
 
 ::: glossary
 
 IPVS (IP Virtual Server)
+
+> IPVS（IP 虚拟服务器）
 
 : The linux kernel module that provides packet forwarding services for network load balancing (Layer-4 switching).
 

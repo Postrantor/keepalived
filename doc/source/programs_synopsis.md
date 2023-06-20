@@ -1,12 +1,17 @@
 ---
+tip: translate by openai@2023-06-20 08:20:49
 title: Keepalived programs synopsis
 ---
 
 Keepalived package comes with 2 programs.
 
+> Keepalived 包括两个程序。
+
 # keepalived daemon
 
 The keepalived command line arguments are:
+
+> keepalived 的命令行参数为：
 
 ::: glossary
 
@@ -83,6 +88,8 @@ The keepalived command line arguments are:
 
 The `genhash` binary is used to generate digest strings. The genhash command line arguments are:
 
+> `genhash` 二进制文件用于生成摘要字符串。 genhash 命令行参数为：
+
 ::: glossary
 
 \--use-ssl, -S
@@ -102,6 +109,8 @@ The `genhash` binary is used to generate digest strings. The genhash command lin
 : Specify the path to the file you want to generate the hash of.
 
 \--use-virtualhost \<host\>, -V
+
+> 使用虚拟主机 \<host\>, -V
 
 : Specify the virtual host to send along with the HTTP headers.
 
@@ -126,12 +135,16 @@ The `genhash` binary is used to generate digest strings. The genhash command lin
 
 To run Keepalived simply type:
 
+> 只需輸入以下指令便可執行 Keepalived：
+
 ```
 [root@lvs tmp]# /etc/rc.d/init.d/keepalived.init start
 Starting Keepalived for LVS:                            [ OK ]
 ```
 
 All daemon messages are logged through the Linux syslog. If you start Keepalived with the "dump configuration data" option, you should see in your /var/log/messages (on Debian this may be _/var/log/daemon.log_ depending on your syslog configuration) something like this:
+
+> 所有守护进程消息都通过 Linux syslog 日志记录。如果您使用“转储配置数据”选项启动 Keepalived，您应该在/ var / log / messages 中看到（在 Debian 上，这可能是*/ var / log / daemon.log*，取决于您的 syslog 配置）类似于：
 
 ```
 Jun 7 18:17:03 lvs1 Keepalived: Starting Keepalived v0.6.1 (06/13, 2002)

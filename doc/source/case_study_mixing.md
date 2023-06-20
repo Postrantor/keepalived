@@ -1,12 +1,17 @@
 ---
+tip: translate by openai@2023-06-20 08:13:29
 title: "Case Study: Mixing Healthcheck & Failover"
 ---
 
 For this example, we use the same topology used in the Failover part. The idea here is to use VRRP VIPs as LVS VIPs. That way we will introduce a High Available LVS director performing LVS real server pool monitoring.
 
+> 对于这个例子，我们使用与故障转移部分相同的拓扑结构。这里的想法是使用 VRRP VIP 作为 LVS VIP。这样，我们将引入一个高可用的 LVS 导演来执行 LVS 真实服务器池监控。
+
 # Keepalived Configuration
 
 The whole configuration is done in the /etc/keepalived/keepalived.conf file. In our case study this file on LVS director 1 looks like:
+
+> 所有配置都在/etc/keepalived/keepalived.conf 文件中完成。在我们的案例研究中，LVS director 1 上的此文件如下所示：
 
 ```
 # Configuration File for keepalived
@@ -150,3 +155,5 @@ virtual_server 192.168.200.12 443 {
 ```
 
 We define the symmetric VRRP configuration file on LVS director 2. That way both directors are active at a time, director 1 handling HTTP stream and director 2 SSL stream.
+
+> 我们在 LVS 导演 2 上定义了对称的 VRRP 配置文件。这样，两个导演同时处于活动状态，导演 1 处理 HTTP 流，导演 2 处理 SSL 流。

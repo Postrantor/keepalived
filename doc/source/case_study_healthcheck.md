@@ -1,15 +1,24 @@
 ---
+tip: translate by openai@2023-06-20 08:11:03
 title: "Case Study: Healthcheck"
 ---
 
 As an example we can introduce the following LVS topology:
 
+> 举例来说，我们可以介绍下面的 LVS 拓扑结构：
+
 First of all, you need a well-configured LVS topology. In the rest of this document, we will assume that all system configurations have been done. This kind of topology is generally implemented in a DMZ architecture. For more information on LVS NAT topology and system configuration please read the nice Joseph Mack LVS HOWTO.
+
+> 首先，您需要一个配置良好的 LVS 拓扑。在本文档的其余部分中，我们将假设所有系统配置都已完成。这种拓扑通常在 DMZ 架构中实现。有关 LVS NAT 拓扑和系统配置的更多信息，请阅读 Joseph Mack LVS HOWTO。
 
 # Main architecture components
 
 - LVS Router: Owning the load balanced IP Class routed (192.168.100.0/24).
+
 - Network Router: The default router for the entire internal network. All the LAN workstations are handled through this IP address.
+
+> 网络路由器：整个内部网络的默认路由器。所有的局域网工作站都通过此 IP 地址处理。
+
 - Network DNS Server: Referencing the internal network IP topology.
 - SMTP Server: SMTP server receiving the mail alerts.
 - SERVER POOL: Set of servers hosting load balanced services.
@@ -18,12 +27,19 @@ First of all, you need a well-configured LVS topology. In the rest of this docum
 
 In this sample configuration we have 2 server pools:
 
+> 在这个示例配置中，我们有两个服务器池：
+
 - Server pool 1: Hosting the HTTP & SSL services. Each server owns two application servers (IBM WEBSPHERE & BEA WEBLOGIC)
+
+> 服务器池 1：提供 HTTP 和 SSL 服务。每台服务器拥有两个应用服务器（IBM WebSphere 和 BEA WebLogic）。
+
 - Server pool 2: Hosting the SMTP service.
 
 # Keepalived configuration
 
 You are now ready to configure the Keepalived daemon according to your LVS topology. The whole configuration is done in the /etc/keepalived/keepalived.conf file. In our case study this file looks like:
+
+> 你现在准备好根据 LVS 拓扑来配置 Keepalived 守护进程了。整个配置都在/etc/keepalived/keepalived.conf 文件中完成。在我们的案例研究中，这个文件看起来像：
 
 ```
 # Configuration File for keepalived
@@ -117,35 +133,80 @@ virtual_server 192.168.200.15 25 {
 
 According to this configuration example, the Keepalived daemon will drive the kernel using the following information:
 
+> 根据这个配置示例，Keepalived 守护进程将使用以下信息驱动内核：
+
 - The LVS server will own the name: LVS_MAIN
 - Notification:
 
   > - SMTP server will be: 192.168.200.20
-  > - SMTP connection timeout is set to: 30 seconded
-  > - Notification emails will be: <admin@domain.com> & <0633225522@domain.com>
+
+> SMTP 服务器将是：192.168.200.20
+
+> - SMTP connection timeout is set to: 30 seconded
+
+> SMTP 连接超时设置为：30 秒。
+
+> - Notification emails will be: <admin@domain.com> & <0633225522@domain.com>
+
+> 通知邮件将会是：<admin@domain.com> 和 <0633225522@domain.com>
 
 - Load balanced services:
 
   > - HTTP: VIP 192.168.200.15 port 80
-  >
-  >   > - Load balancing: Using Weighted Round Robin scheduler with NAT forwarding. Connection persistence is set to 50 seconds on each TCP service. If you are using Linux kernel 2.2 you need to specify the NAT netmask to define the IPFW masquerade granularity (nat_mask keyword). The delay loop is set to 30 seconds
-  >   > - Sorry Server: If all real servers are removed from the VS's server pools, we add the sorry_server 192.168.100.100 port 80 to serve clients requests.
-  >   > - Real server 192.168.100.2 port 80 will be weighted to 2. Failure detection will be based on HTTP_GET over 2 URLS. The service connection timeout will be set to 3 seconds. The real server will be considered down after 3 retries. The daemon will wait for 2 seconds before retrying.
-  >   > - Real server 192.168.100.3 port 80 will be weighted to 1. Failure detection will be based on HTTP_GET over 1 URL. The service connection timeout will be set to 3 seconds. The real server will be considered down after 3 retries. The daemon will wait for 2 seconds before retrying.
-  >
-  > - SSL: VIP 192.168.200.15 port 443
-  >
-  >   > - Load balancing: Using Round Robin scheduler with NAT forwarding. Connection persistence is set to 360 seconds on each TCP service. The delay loop is set to 20 seconds
-  >   > - Real server 192.168.100.2 port 443 will be weighted to 2. Failure detection will be based on TCP_CHECK. The real server will be considered down after a 3-second connection timeout.
-  >   > - Real server 192.168.100.3 port 443 will be weighted to 2. Failure detection will be based on TCP_CHECK. The real server will be considered down after a 3-second connection timeout.
-  >
-  > - SMTP: VIP 192.168.200.15 port 25
-  >
-  >   > - Load balancing: Using Weighted Least Connection scheduling algorithm in a NAT topology with connection persistence set to 50 seconds. The delay loop is set to 15 seconds
-  >   > - Real server 192.168.100.4 port 25 will be weighted to 1. Failure detection will be based on TCP_CHECK. The real server will be considered down after a 3-second connection timeout.
-  >   > - Real server 192.168.100.5 port 25 will be weighted to 2. Failure detection will be based on TCP_CHECK. The real server will be considered down after a 3-second connection timeout.
+
+> HTTP：VIP 192.168.200.15 端口 80
+
+> > - Load balancing: Using Weighted Round Robin scheduler with NAT forwarding. Connection persistence is set to 50 seconds on each TCP service. If you are using Linux kernel 2.2 you need to specify the NAT netmask to define the IPFW masquerade granularity (nat_mask keyword). The delay loop is set to 30 seconds
+
+> 负载均衡：使用加权轮询调度程序和 NAT 转发。连接持久性设置为每个 TCP 服务 50 秒。如果您使用的是 Linux 内核 2.2，则需要指定 NAT 子网掩码以定义 IPFW 伪装粒度（nat_mask 关键字）。延迟循环设置为 30 秒。
+
+> > - Sorry Server: If all real servers are removed from the VS's server pools, we add the sorry_server 192.168.100.100 port 80 to serve clients requests.
+
+> 抱歉服务器：如果所有真实服务器都从 VS 的服务器池中移除，我们将 sorry_server 192.168.100.100 端口 80 添加以为客户服务请求。
+
+> > - Real server 192.168.100.2 port 80 will be weighted to 2. Failure detection will be based on HTTP_GET over 2 URLS. The service connection timeout will be set to 3 seconds. The real server will be considered down after 3 retries. The daemon will wait for 2 seconds before retrying.
+
+> 真实服务器 192.168.100.2 端口 80 将被加权为 2。故障检测将基于 2 个 URL 的 HTTP_GET。服务连接超时将设置为 3 秒。在 3 次重试后，将认为真实服务器已停止。守护进程将在重试前等待 2 秒。
+
+> > - Real server 192.168.100.3 port 80 will be weighted to 1. Failure detection will be based on HTTP_GET over 1 URL. The service connection timeout will be set to 3 seconds. The real server will be considered down after 3 retries. The daemon will wait for 2 seconds before retrying.
+
+> 真实服务器 192.168.100.3 端口 80 将被设置为 1。故障检测将基于 HTTP_GET 超过 1 个 URL。服务连接超时将设置为 3 秒。在 3 次重试后，将认为真实服务器已经关闭。守护进程将在重试前等待 2 秒。
+
+> - SSL: VIP 192.168.200.15 port 443
+
+> SSL：VIP 192.168.200.15 端口 443
+
+> > - Load balancing: Using Round Robin scheduler with NAT forwarding. Connection persistence is set to 360 seconds on each TCP service. The delay loop is set to 20 seconds
+
+> 负载均衡：使用 Round Robin 调度程序配合 NAT 转发。每个 TCP 服务的连接持久性设置为 360 秒。延迟循环设置为 20 秒。
+
+> > - Real server 192.168.100.2 port 443 will be weighted to 2. Failure detection will be based on TCP_CHECK. The real server will be considered down after a 3-second connection timeout.
+
+> 真实服务器 192.168.100.2 端口 443 将被设置为权重 2。故障检测将基于 TCP_CHECK。在 3 秒的连接超时后，将视为真实服务器已经关闭。
+
+> > - Real server 192.168.100.3 port 443 will be weighted to 2. Failure detection will be based on TCP_CHECK. The real server will be considered down after a 3-second connection timeout.
+
+> 真实服务器 192.168.100.3 端口 443 将被赋予 2 倍的权重。故障检测将基于 TCP_CHECK。在 3 秒钟连接超时后，将认为真实服务器已经关闭。
+
+> - SMTP: VIP 192.168.200.15 port 25
+
+> SMTP：VIP 192.168.200.15 端口 25
+
+> > - Load balancing: Using Weighted Least Connection scheduling algorithm in a NAT topology with connection persistence set to 50 seconds. The delay loop is set to 15 seconds
+
+> 负载均衡：在 NAT 拓扑中使用加权最少连接调度算法，连接持久性设置为 50 秒。延迟循环设置为 15 秒。
+
+> > - Real server 192.168.100.4 port 25 will be weighted to 1. Failure detection will be based on TCP_CHECK. The real server will be considered down after a 3-second connection timeout.
+
+> 真实服务器 192.168.100.4 端口 25 将被设置为权重 1。故障检测将基于 TCP_CHECK。在 3 秒的连接超时后，将认为真实服务器已经宕机。
+
+> > - Real server 192.168.100.5 port 25 will be weighted to 2. Failure detection will be based on TCP_CHECK. The real server will be considered down after a 3-second connection timeout.
+
+> 真实服务器 192.168.100.5 端口 25 将被加权为 2。故障检测将基于 TCP_CHECK。在 3 秒的连接超时后，将视为真实服务器已经关闭。
 
 For SSL server health check, we can use SSL_GET checkers. The configuration block for a corresponding real server will look like:
+
+> 对于 SSL 服务器健康检查，我们可以使用 SSL_GET 检查程序。 相应的真实服务器的配置块将如下所示：
 
 ```
 virtual_server 192.168.200.15 443 {
@@ -189,6 +250,8 @@ virtual_server 192.168.200.15 443 {
 
 To generate a sum over an URL simply proceed as follows:
 
+> 简单地按照以下步骤生成一个 URL 的总和：
+
 ```
 [root@lvs /root]# genhash –s 192.168.100.2 –p 80 –u /testurl/test.jsp
 --------------------------[ HTTP Header Buffer ]--------------------------
@@ -225,3 +288,5 @@ MD5 Digest : ec90a42b99ea9a2f5ecbe213ac9eba03
 ```
 
 The only thing to do is to copy the generated MD5 Digest value generated and paste it into your Keepalived configuration file as a digest value keyword.
+
+> 唯一要做的就是复制生成的 MD5 摘要值，并将其粘贴到 Keepalived 配置文件中作为摘要值关键字。
